@@ -5,7 +5,10 @@ from flask_cors import CORS
 from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 from neo4j import GraphDatabase
-import config
+try:
+    import config_demo as config
+except ImportError:
+    import config
 import time
 import threading
 
