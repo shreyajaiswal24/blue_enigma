@@ -413,7 +413,7 @@ HTML_TEMPLATE = '''
             }
         }
         
-        function displayResults(query, data) {
+        function displayResults(query, apiResponse) {
             const resultsSection = document.getElementById('resultsSection');
             const resultsTitle = document.getElementById('resultsTitle');
             const resultsCount = document.getElementById('resultsCount');
@@ -423,16 +423,31 @@ HTML_TEMPLATE = '''
             resultsSection.style.display = 'block';
             resultsTitle.textContent = `Results for "${query}"`;
             
-            // Simulate results based on our travel data
-            const mockResults = generateMockResults(query);
-            resultsCount.textContent = `${mockResults.length} places found`;
-            
-            // Clear and populate results
-            resultsGrid.innerHTML = '';
-            mockResults.forEach(result => {
-                const card = createResultCard(result);
-                resultsGrid.appendChild(card);
-            });
+            // Check if we have results from the API
+            if (apiResponse.results_count > 0) {
+                resultsCount.textContent = `${apiResponse.results_count} places found`;
+                
+                // Parse the response text to extract place information
+                const places = parseApiResponse(apiResponse.response);
+                
+                // Clear and populate results
+                resultsGrid.innerHTML = '';
+                places.forEach(place => {
+                    const card = createResultCard(place);
+                    resultsGrid.appendChild(card);
+                });
+            } else {
+                // Use mock results as fallback
+                const mockResults = generateMockResults(query);
+                resultsCount.textContent = `${mockResults.length} places found`;
+                
+                // Clear and populate results
+                resultsGrid.innerHTML = '';
+                mockResults.forEach(result => {
+                    const card = createResultCard(result);
+                    resultsGrid.appendChild(card);
+                });
+            }
             
             // Populate related places
             relatedGrid.innerHTML = '';
@@ -443,6 +458,38 @@ HTML_TEMPLATE = '''
             
             // Scroll to results
             resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function parseApiResponse(responseText) {
+            // Parse the formatted response text to extract place information
+            const places = [];
+            const lines = responseText.split('\\n');
+            let currentPlace = null;
+            
+            for (let line of lines) {
+                line = line.trim();
+                if (line.match(/^\d+\.\s\*\*(.*?)\*\*\s\((.*?)\)$/)) {
+                    // New place found
+                    if (currentPlace) places.push(currentPlace);
+                    
+                    const match = line.match(/^\d+\.\s\*\*(.*?)\*\*\s\((.*?)\)$/);
+                    currentPlace = {
+                        name: match[1],
+                        location: match[2],
+                        description: '',
+                        category: '',
+                        relevance: Math.random() * 0.3 + 0.7, // Generate random relevance between 0.7-1.0
+                        tags: []
+                    };
+                } else if (line.startsWith('Category:') && currentPlace) {
+                    currentPlace.category = line.replace('Category:', '').trim();
+                } else if (line && !line.includes('Would you like') && currentPlace && !currentPlace.description) {
+                    currentPlace.description = line;
+                }
+            }
+            
+            if (currentPlace) places.push(currentPlace);
+            return places;
         }
         
         function generateMockResults(query) {
@@ -733,65 +780,86 @@ def simple_search(query, data):
     query_lower = query.lower()
     results = []
     
-    # Enhanced search logic matching frontend
+    # Enhanced search logic - more flexible matching
+    filtered_data = []
+    
+    # Check for specific categories first
     if 'beach' in query_lower or 'coast' in query_lower or 'island' in query_lower:
-        # Filter for beach destinations
         filtered_data = [item for item in data if 
                         item.get('category') == 'Beach' or 
                         any(tag in ['beach', 'coast', 'island', 'swimming', 'resort'] 
                             for tag in item.get('tags', []))]
     elif 'culture' in query_lower or 'heritage' in query_lower or 'temple' in query_lower or 'cultural' in query_lower:
-        # Filter for cultural attractions
         filtered_data = [item for item in data if 
                         item.get('category') == 'Cultural' or 
                         any(tag in ['culture', 'heritage', 'temple', 'history', 'traditional'] 
                             for tag in item.get('tags', []))]
     elif 'food' in query_lower or 'eating' in query_lower or 'restaurant' in query_lower or 'market' in query_lower:
-        # Filter for food experiences
         filtered_data = [item for item in data if 
                         item.get('category') == 'Food' or 
                         any(tag in ['food', 'market', 'restaurant', 'street-food', 'pho', 'banh-mi'] 
                             for tag in item.get('tags', []))]
-    elif 'hanoi' in query_lower:
-        # Filter for Hanoi-related places
-        filtered_data = [item for item in data if 
-                        'hanoi' in item.get('location', '').lower() or 
-                        'hanoi' in item.get('tags', []) or
-                        'hanoi' in item.get('name', '').lower()]
     elif 'nature' in query_lower or 'mountain' in query_lower or 'cave' in query_lower or 'park' in query_lower:
-        # Filter for natural attractions
         filtered_data = [item for item in data if 
                         item.get('category') == 'Nature' or 
                         any(tag in ['nature', 'mountains', 'caves', 'national-park', 'trekking'] 
                             for tag in item.get('tags', []))]
-    else:
-        # General search across all fields
+    
+    # If no category match found, check for location-based searches
+    if not filtered_data:
+        if 'hanoi' in query_lower:
+            filtered_data = [item for item in data if 
+                            'hanoi' in item.get('location', '').lower() or 
+                            'hanoi' in item.get('tags', []) or
+                            'hanoi' in item.get('name', '').lower()]
+        elif 'ho chi minh' in query_lower or 'saigon' in query_lower:
+            filtered_data = [item for item in data if 
+                            'ho chi minh' in item.get('location', '').lower() or 
+                            'saigon' in item.get('location', '').lower() or
+                            'ho chi minh' in item.get('name', '').lower()]
+    
+    # If still no matches, do general search
+    if not filtered_data:
         filtered_data = data
     
     # Score the filtered results
+    query_words = query_lower.split()
+    
     for item in filtered_data:
         score = 0
         
-        # Check name (highest priority)
+        # Check each word in the query
+        for word in query_words:
+            # Skip common words
+            if word in ['in', 'to', 'the', 'of', 'and', 'or', 'a', 'an', 'best', 'places']:
+                continue
+                
+            # Check name (highest priority)
+            if word in item.get('name', '').lower():
+                score += 10
+                
+            # Check description
+            if word in item.get('description', '').lower():
+                score += 5
+                
+            # Check location
+            if word in item.get('location', '').lower():
+                score += 8  # Higher score for location matches
+                
+            # Check category
+            if word in item.get('category', '').lower():
+                score += 3
+                
+            # Check tags
+            for tag in item.get('tags', []):
+                if word in tag.lower():
+                    score += 6
+        
+        # Also check for exact phrase matches (bonus points)
         if query_lower in item.get('name', '').lower():
-            score += 10
-            
-        # Check description
+            score += 15
         if query_lower in item.get('description', '').lower():
-            score += 5
-            
-        # Check location
-        if query_lower in item.get('location', '').lower():
-            score += 3
-            
-        # Check category
-        if query_lower in item.get('category', '').lower():
-            score += 2
-            
-        # Check tags
-        for tag in item.get('tags', []):
-            if query_lower in tag.lower():
-                score += 4
+            score += 10
                 
         if score > 0:
             item_copy = item.copy()
