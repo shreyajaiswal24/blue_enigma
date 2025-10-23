@@ -446,19 +446,86 @@ HTML_TEMPLATE = '''
         }
         
         function generateMockResults(query) {
-            const mockData = [
-                { name: 'Hanoi', location: 'Northern Vietnam', relevance: 0.83, category: 'City', tags: ['culture', 'food', 'heritage'] },
-                { name: 'Ha Long Bay', location: 'Quang Ninh Province', relevance: 0.79, category: 'City', tags: ['beach', 'cruise', 'nature'] },
-                { name: 'Hoi An Ancient Town', location: 'Quang Nam Province', relevance: 0.75, category: 'Attraction', tags: ['heritage', 'culture', 'lanterns'] },
-                { name: 'Ho Chi Minh City', location: 'Southern Vietnam', relevance: 0.72, category: 'City', tags: ['urban', 'history', 'markets'] },
-                { name: 'Sapa', location: 'Lao Cai Province', relevance: 0.68, category: 'Attraction', tags: ['mountains', 'trekking', 'culture'] }
+            const allTravelData = [
+                // Cities and Cultural Places
+                { name: 'Hanoi', location: 'Northern Vietnam', relevance: 0.85, category: 'City', tags: ['culture', 'food', 'heritage', 'hanoi'], description: 'Vietnam\'s capital with rich history and culture' },
+                { name: 'Ho Chi Minh City', location: 'Southern Vietnam', relevance: 0.82, category: 'City', tags: ['urban', 'history', 'markets', 'nightlife'], description: 'Vibrant metropolis and economic center' },
+                { name: 'Hue Imperial City', location: 'Central Vietnam', relevance: 0.78, category: 'Attraction', tags: ['heritage', 'culture', 'imperial', 'history'], description: 'Ancient imperial capital with royal tombs' },
+                { name: 'Hoi An Ancient Town', location: 'Quang Nam Province', relevance: 0.76, category: 'Attraction', tags: ['heritage', 'culture', 'lanterns', 'unesco'], description: 'UNESCO World Heritage ancient trading port' },
+                
+                // Beach Destinations
+                { name: 'Nha Trang Beach', location: 'Khanh Hoa Province', relevance: 0.88, category: 'Beach', tags: ['beach', 'swimming', 'resort', 'coast'], description: 'Popular beach resort with clear waters' },
+                { name: 'Phu Quoc Island', location: 'Kien Giang Province', relevance: 0.85, category: 'Beach', tags: ['beach', 'island', 'tropical', 'resort'], description: 'Tropical paradise with pristine beaches' },
+                { name: 'Da Nang Beach', location: 'Central Vietnam', relevance: 0.80, category: 'Beach', tags: ['beach', 'modern', 'surfing', 'coast'], description: 'Modern coastal city with beautiful beaches' },
+                { name: 'Mui Ne Beach', location: 'Binh Thuan Province', relevance: 0.75, category: 'Beach', tags: ['beach', 'sand-dunes', 'windsurfing', 'resort'], description: 'Beach destination famous for red sand dunes' },
+                { name: 'Vung Tau Beach', location: 'Ba Ria-Vung Tau Province', relevance: 0.70, category: 'Beach', tags: ['beach', 'nearby', 'weekend', 'coast'], description: 'Popular weekend beach getaway from Ho Chi Minh City' },
+                
+                // Cultural Attractions
+                { name: 'Temple of Literature', location: 'Hanoi', relevance: 0.82, category: 'Cultural', tags: ['culture', 'temple', 'education', 'hanoi'], description: 'Vietnam\'s first university and Confucian temple' },
+                { name: 'Cu Chi Tunnels', location: 'Ho Chi Minh City', relevance: 0.79, category: 'Cultural', tags: ['culture', 'history', 'war', 'tunnels'], description: 'Historic underground tunnel network' },
+                { name: 'My Son Sanctuary', location: 'Quang Nam Province', relevance: 0.77, category: 'Cultural', tags: ['culture', 'heritage', 'cham', 'ancient'], description: 'Ancient Cham temple complex' },
+                { name: 'One Pillar Pagoda', location: 'Hanoi', relevance: 0.74, category: 'Cultural', tags: ['culture', 'pagoda', 'buddhist', 'hanoi'], description: 'Historic Buddhist temple in Hanoi' },
+                { name: 'Cao Dai Temple', location: 'Tay Ninh Province', relevance: 0.71, category: 'Cultural', tags: ['culture', 'religion', 'unique', 'temple'], description: 'Sacred temple of Cao Daism religion' },
+                
+                // Food Experiences
+                { name: 'Ben Thanh Market', location: 'Ho Chi Minh City', relevance: 0.84, category: 'Food', tags: ['food', 'market', 'street-food', 'shopping'], description: 'Famous market for Vietnamese street food' },
+                { name: 'Dong Xuan Market', location: 'Hanoi', relevance: 0.81, category: 'Food', tags: ['food', 'market', 'local', 'hanoi'], description: 'Traditional market with authentic Vietnamese food' },
+                { name: 'Pho Gia Truyen', location: 'Hanoi', relevance: 0.78, category: 'Food', tags: ['food', 'pho', 'restaurant', 'authentic'], description: 'Famous pho restaurant in Hanoi' },
+                { name: 'Banh Mi 25', location: 'Hanoi', relevance: 0.75, category: 'Food', tags: ['food', 'banh-mi', 'street-food', 'hanoi'], description: 'Legendary banh mi sandwich shop' },
+                { name: 'Saigon Street Food Tour', location: 'Ho Chi Minh City', relevance: 0.72, category: 'Food', tags: ['food', 'tour', 'street-food', 'experience'], description: 'Guided street food exploration tour' },
+                
+                // Natural Attractions
+                { name: 'Ha Long Bay', location: 'Quang Ninh Province', relevance: 0.90, category: 'Nature', tags: ['nature', 'cruise', 'limestone', 'unesco'], description: 'UNESCO World Heritage bay with limestone islands' },
+                { name: 'Sapa Rice Terraces', location: 'Lao Cai Province', relevance: 0.86, category: 'Nature', tags: ['nature', 'mountains', 'trekking', 'terraces'], description: 'Stunning mountain rice terraces' },
+                { name: 'Phong Nha-Ke Bang National Park', location: 'Quang Binh Province', relevance: 0.83, category: 'Nature', tags: ['nature', 'caves', 'national-park', 'adventure'], description: 'National park famous for spectacular caves' },
+                { name: 'Mekong Delta', location: 'Southern Vietnam', relevance: 0.80, category: 'Nature', tags: ['nature', 'river', 'boat-tour', 'rural'], description: 'Vast river delta with floating markets' },
+                { name: 'Ba Na Hills', location: 'Da Nang', relevance: 0.77, category: 'Nature', tags: ['nature', 'mountains', 'golden-bridge', 'theme-park'], description: 'Mountain resort with famous Golden Bridge' }
             ];
             
-            return mockData.filter(item => 
-                item.name.toLowerCase().includes(query.toLowerCase()) ||
-                item.location.toLowerCase().includes(query.toLowerCase()) ||
-                item.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
-            );
+            const queryLower = query.toLowerCase();
+            let filteredResults = [];
+            
+            // Enhanced search logic
+            if (queryLower.includes('beach') || queryLower.includes('coast') || queryLower.includes('island')) {
+                filteredResults = allTravelData.filter(item => 
+                    item.category === 'Beach' || 
+                    item.tags.some(tag => ['beach', 'coast', 'island', 'swimming', 'resort'].includes(tag))
+                );
+            } else if (queryLower.includes('culture') || queryLower.includes('heritage') || queryLower.includes('temple') || queryLower.includes('cultural')) {
+                filteredResults = allTravelData.filter(item => 
+                    item.category === 'Cultural' || 
+                    item.tags.some(tag => ['culture', 'heritage', 'temple', 'history', 'traditional'].includes(tag))
+                );
+            } else if (queryLower.includes('food') || queryLower.includes('eating') || queryLower.includes('restaurant') || queryLower.includes('market')) {
+                filteredResults = allTravelData.filter(item => 
+                    item.category === 'Food' || 
+                    item.tags.some(tag => ['food', 'market', 'restaurant', 'street-food', 'pho', 'banh-mi'].includes(tag))
+                );
+            } else if (queryLower.includes('hanoi')) {
+                filteredResults = allTravelData.filter(item => 
+                    item.location.toLowerCase().includes('hanoi') || 
+                    item.tags.includes('hanoi') ||
+                    item.name.toLowerCase().includes('hanoi')
+                );
+            } else if (queryLower.includes('nature') || queryLower.includes('mountain') || queryLower.includes('cave') || queryLower.includes('park')) {
+                filteredResults = allTravelData.filter(item => 
+                    item.category === 'Nature' || 
+                    item.tags.some(tag => ['nature', 'mountains', 'caves', 'national-park', 'trekking'].includes(tag))
+                );
+            } else {
+                // General search - look in names, locations, tags, and descriptions
+                filteredResults = allTravelData.filter(item => 
+                    item.name.toLowerCase().includes(queryLower) ||
+                    item.location.toLowerCase().includes(queryLower) ||
+                    item.description.toLowerCase().includes(queryLower) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(queryLower))
+                );
+            }
+            
+            // Sort by relevance and return top 6 results
+            return filteredResults
+                .sort((a, b) => b.relevance - a.relevance)
+                .slice(0, 6);
         }
         
         function createResultCard(result) {
@@ -515,49 +582,197 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
-# Sample travel data
+# Enhanced travel data with multiple categories
 travel_data = [
+    # Cities and Cultural Places
     {
-        "name": "Ha Long Bay",
-        "description": "UNESCO World Heritage site famous for its emerald waters and limestone islands",
-        "location": "Quang Ninh Province",
-        "category": "Natural Wonder"
-    },
-    {
-        "name": "Hoi An Ancient Town", 
-        "description": "Historic trading port with beautiful architecture and lantern festivals",
-        "location": "Quang Nam Province",
-        "category": "Cultural Heritage"
+        "name": "Hanoi",
+        "description": "Vietnam's capital with rich history and culture",
+        "location": "Northern Vietnam",
+        "category": "City",
+        "tags": ["culture", "food", "heritage", "hanoi"]
     },
     {
         "name": "Ho Chi Minh City",
-        "description": "Vibrant metropolis known for its French colonial architecture and street food",
-        "location": "South Vietnam",
-        "category": "City"
+        "description": "Vibrant metropolis and economic center",
+        "location": "Southern Vietnam", 
+        "category": "City",
+        "tags": ["urban", "history", "markets", "nightlife"]
     },
     {
-        "name": "Sapa",
-        "description": "Mountain town famous for terraced rice fields and ethnic minority culture",
+        "name": "Hue Imperial City",
+        "description": "Ancient imperial capital with royal tombs",
+        "location": "Central Vietnam",
+        "category": "Cultural",
+        "tags": ["heritage", "culture", "imperial", "history"]
+    },
+    {
+        "name": "Hoi An Ancient Town",
+        "description": "UNESCO World Heritage ancient trading port",
+        "location": "Quang Nam Province",
+        "category": "Cultural",
+        "tags": ["heritage", "culture", "lanterns", "unesco"]
+    },
+    
+    # Beach Destinations
+    {
+        "name": "Nha Trang Beach",
+        "description": "Popular beach resort with clear waters",
+        "location": "Khanh Hoa Province",
+        "category": "Beach",
+        "tags": ["beach", "swimming", "resort", "coast"]
+    },
+    {
+        "name": "Phu Quoc Island",
+        "description": "Tropical paradise with pristine beaches",
+        "location": "Kien Giang Province",
+        "category": "Beach",
+        "tags": ["beach", "island", "tropical", "resort"]
+    },
+    {
+        "name": "Da Nang Beach",
+        "description": "Modern coastal city with beautiful beaches",
+        "location": "Central Vietnam",
+        "category": "Beach",
+        "tags": ["beach", "modern", "surfing", "coast"]
+    },
+    {
+        "name": "Mui Ne Beach",
+        "description": "Beach destination famous for red sand dunes",
+        "location": "Binh Thuan Province",
+        "category": "Beach",
+        "tags": ["beach", "sand-dunes", "windsurfing", "resort"]
+    },
+    {
+        "name": "Vung Tau Beach",
+        "description": "Popular weekend beach getaway from Ho Chi Minh City",
+        "location": "Ba Ria-Vung Tau Province",
+        "category": "Beach",
+        "tags": ["beach", "nearby", "weekend", "coast"]
+    },
+    
+    # Cultural Attractions
+    {
+        "name": "Temple of Literature",
+        "description": "Vietnam's first university and Confucian temple",
+        "location": "Hanoi",
+        "category": "Cultural",
+        "tags": ["culture", "temple", "education", "hanoi"]
+    },
+    {
+        "name": "Cu Chi Tunnels",
+        "description": "Historic underground tunnel network",
+        "location": "Ho Chi Minh City",
+        "category": "Cultural",
+        "tags": ["culture", "history", "war", "tunnels"]
+    },
+    {
+        "name": "My Son Sanctuary",
+        "description": "Ancient Cham temple complex",
+        "location": "Quang Nam Province",
+        "category": "Cultural",
+        "tags": ["culture", "heritage", "cham", "ancient"]
+    },
+    
+    # Food Experiences
+    {
+        "name": "Ben Thanh Market",
+        "description": "Famous market for Vietnamese street food",
+        "location": "Ho Chi Minh City",
+        "category": "Food",
+        "tags": ["food", "market", "street-food", "shopping"]
+    },
+    {
+        "name": "Dong Xuan Market",
+        "description": "Traditional market with authentic Vietnamese food",
+        "location": "Hanoi",
+        "category": "Food",
+        "tags": ["food", "market", "local", "hanoi"]
+    },
+    {
+        "name": "Pho Gia Truyen",
+        "description": "Famous pho restaurant in Hanoi",
+        "location": "Hanoi",
+        "category": "Food",
+        "tags": ["food", "pho", "restaurant", "authentic"]
+    },
+    
+    # Natural Attractions
+    {
+        "name": "Ha Long Bay",
+        "description": "UNESCO World Heritage bay with limestone islands",
+        "location": "Quang Ninh Province",
+        "category": "Nature",
+        "tags": ["nature", "cruise", "limestone", "unesco"]
+    },
+    {
+        "name": "Sapa Rice Terraces",
+        "description": "Stunning mountain rice terraces",
         "location": "Lao Cai Province",
-        "category": "Mountain"
+        "category": "Nature",
+        "tags": ["nature", "mountains", "trekking", "terraces"]
     },
     {
         "name": "Phong Nha-Ke Bang National Park",
-        "description": "UNESCO site with spectacular caves and underground rivers",
+        "description": "National park famous for spectacular caves",
         "location": "Quang Binh Province",
-        "category": "National Park"
+        "category": "Nature",
+        "tags": ["nature", "caves", "national-park", "adventure"]
+    },
+    {
+        "name": "Mekong Delta",
+        "description": "Vast river delta with floating markets",
+        "location": "Southern Vietnam",
+        "category": "Nature",
+        "tags": ["nature", "river", "boat-tour", "rural"]
     }
 ]
 
 def simple_search(query, data):
-    """Simple keyword-based search for demo purposes"""
+    """Enhanced search with category-specific filtering"""
     query_lower = query.lower()
     results = []
     
-    for item in data:
+    # Enhanced search logic matching frontend
+    if 'beach' in query_lower or 'coast' in query_lower or 'island' in query_lower:
+        # Filter for beach destinations
+        filtered_data = [item for item in data if 
+                        item.get('category') == 'Beach' or 
+                        any(tag in ['beach', 'coast', 'island', 'swimming', 'resort'] 
+                            for tag in item.get('tags', []))]
+    elif 'culture' in query_lower or 'heritage' in query_lower or 'temple' in query_lower or 'cultural' in query_lower:
+        # Filter for cultural attractions
+        filtered_data = [item for item in data if 
+                        item.get('category') == 'Cultural' or 
+                        any(tag in ['culture', 'heritage', 'temple', 'history', 'traditional'] 
+                            for tag in item.get('tags', []))]
+    elif 'food' in query_lower or 'eating' in query_lower or 'restaurant' in query_lower or 'market' in query_lower:
+        # Filter for food experiences
+        filtered_data = [item for item in data if 
+                        item.get('category') == 'Food' or 
+                        any(tag in ['food', 'market', 'restaurant', 'street-food', 'pho', 'banh-mi'] 
+                            for tag in item.get('tags', []))]
+    elif 'hanoi' in query_lower:
+        # Filter for Hanoi-related places
+        filtered_data = [item for item in data if 
+                        'hanoi' in item.get('location', '').lower() or 
+                        'hanoi' in item.get('tags', []) or
+                        'hanoi' in item.get('name', '').lower()]
+    elif 'nature' in query_lower or 'mountain' in query_lower or 'cave' in query_lower or 'park' in query_lower:
+        # Filter for natural attractions
+        filtered_data = [item for item in data if 
+                        item.get('category') == 'Nature' or 
+                        any(tag in ['nature', 'mountains', 'caves', 'national-park', 'trekking'] 
+                            for tag in item.get('tags', []))]
+    else:
+        # General search across all fields
+        filtered_data = data
+    
+    # Score the filtered results
+    for item in filtered_data:
         score = 0
         
-        # Check name
+        # Check name (highest priority)
         if query_lower in item.get('name', '').lower():
             score += 10
             
@@ -573,14 +788,19 @@ def simple_search(query, data):
         if query_lower in item.get('category', '').lower():
             score += 2
             
+        # Check tags
+        for tag in item.get('tags', []):
+            if query_lower in tag.lower():
+                score += 4
+                
         if score > 0:
             item_copy = item.copy()
             item_copy['relevance_score'] = score
             results.append(item_copy)
     
-    # Sort by relevance score
+    # Sort by relevance score and return top results
     results.sort(key=lambda x: x['relevance_score'], reverse=True)
-    return results[:5]  # Return top 5 results
+    return results[:6]  # Return top 6 results
 
 @app.route('/')
 def home():
