@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Enigma - Vietnam Travel Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-lotus"></i>
+                <h1>Blue Enigma</h1>
+            </div>
+            <p class="tagline">AI-Powered Vietnam Travel Assistant</p>
+        </header>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        placeholder="Ask me about Vietnam travel... (e.g., 'Best beaches in Vietnam')"
+                        autocomplete="off"
+                    >
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="search-suggestions">
+                    <div class="suggestion" data-query="Best places to visit in Hanoi">🏛️ Best places in Hanoi</div>
+                    <div class="suggestion" data-query="Beach destinations in Vietnam">🏖️ Beach destinations</div>
+                    <div class="suggestion" data-query="Cultural attractions in Ho Chi Minh City">🎭 Cultural attractions</div>
+                    <div class="suggestion" data-query="Food experiences in Vietnam">🍜 Food experiences</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading Section -->
+        <section class="loading-section" id="loadingSection" style="display: none;">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+                <p>Searching Vietnam's hidden gems...</p>
+            </div>
+        </section>
+
+        <!-- Results Section -->
+        <section class="results-section" id="resultsSection" style="display: none;">
+            <div class="results-header">
+                <h2 id="resultsTitle">Search Results</h2>
+                <div class="results-stats" id="resultsStats"></div>
+            </div>
+            
+            <div class="results-grid" id="resultsGrid">
+                <!-- Results will be populated here -->
+            </div>
+
+            <!-- Connections Section -->
+            <div class="connections-section" id="connectionsSection" style="display: none;">
+                <h3><i class="fas fa-project-diagram"></i> Related Places</h3>
+                <div class="connections-grid" id="connectionsGrid">
+                    <!-- Connections will be populated here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="tech-stack">
+                    <span class="tech-item"><i class="fas fa-brain"></i> Hugging Face AI</span>
+                    <span class="tech-item"><i class="fas fa-database"></i> Neo4j Graph</span>
+                    <span class="tech-item"><i class="fas fa-vector-square"></i> Pinecone Vector</span>
+                    <span class="tech-item"><i class="fas fa-flask"></i> Python Flask</span>
+                </div>
+                <p>&copy; 2025 Blue Enigma - Hybrid AI Travel Assistant</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Error Modal -->
+    <div class="modal" id="errorModal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h3><i class="fas fa-exclamation-triangle"></i> Error</h3>
+            <p id="errorMessage"></p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

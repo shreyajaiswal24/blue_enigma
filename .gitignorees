@@ -1,0 +1,36 @@
+```
+
+Add this content:
+```
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.env
+
+# Windows Zone Identifiers (those annoying files)
+*:Zone.Identifier
+
+# ZIP archives (you can unzip and ignore them)
+*.zip
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# Environment variables
+.env
+config.py
+
+# OS
+.DS_Store
+Thumbs.db
+
