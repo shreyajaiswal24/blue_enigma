@@ -202,9 +202,8 @@ def health_check():
         'timestamp': time.time()
     })
 
-# Vercel entry point
-def handler(request):
-    return app(request)
+# For Vercel, the Flask app should be available at module level
+# No additional handler needed - Vercel handles WSGI automatically
 
 if __name__ == '__main__':
     app.run(debug=True)
